@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'contact',
+        'branch_code'
     ];
 
     /**
@@ -44,5 +47,35 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+
+    public function isSuperAdmin()
+    {
+        return $this->role === 'super_admin';
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isDoctor()
+    {
+        return $this->role === 'doctor';
+    }
+
+    public function isPatient()
+    {
+        return $this->role === 'patient';
+    }
+
+
+
+
+    public function branches()
+    {
+        return $this->hasMany(Branch::class, 'admin_id');
     }
 }
