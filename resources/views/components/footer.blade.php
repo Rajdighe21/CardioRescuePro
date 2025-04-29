@@ -4,8 +4,8 @@
     <!--end::To the end-->
     <!--begin::Copyright-->
     <strong>
-        Copyright &copy; 2014-2024&nbsp;
-        <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.
+        Copyright &copy; 2025-2026&nbsp;
+        <a href="https://github.com/Rajdighe21" class="text-decoration-none">Raj Dighe</a>.
     </strong>
     All rights reserved.
     <!--end::Copyright-->

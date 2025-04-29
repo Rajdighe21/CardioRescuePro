@@ -33,12 +33,11 @@ class RegistrationController extends Controller
         try {
             $this->DynamicDBService->setConnection($database_name);
             $users = DB::table('patient_registrations')->get();
-
         } catch (\Exception $e) {
             DB::setDefaultConnection(env('DB_CONNECTION', 'mysql'));
             $users = DB::table('users')->where('role', 'patients')->get();
         }
-// return $users;
+        // return $users;
         return view('registration.index', compact('users'));
     }
 
@@ -47,7 +46,7 @@ class RegistrationController extends Controller
      */
     public function create()
     {
-        $userId = User::orderBy('id', 'desc')->pluck('id')->first();
+        $userId = User::orderBy('id', 'desc')->pluck('id')->first() + 1;
         $branchPrifix = Auth::user()->branch_code;
         $prefix = substr($branchPrifix, 0, 2) . date('Y') . '00' . $userId;
         return view('registration.patients-registration', compact('prefix'));
@@ -95,7 +94,7 @@ class RegistrationController extends Controller
             $imageName = time() . '_' . $image->getClientOriginalName();
 
             // Define dynamic folder path
-            $folderPath = 'branch/patient_images/' . $database_name;
+            $folderPath = 'branch/' . $database_name . '/patient_images';
 
             // Check if folder exists, if not create it
             if (!Storage::disk('public')->exists($folderPath)) {
