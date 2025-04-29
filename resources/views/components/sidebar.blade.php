@@ -19,16 +19,16 @@
         <nav class="mt-2">
             <!--begin::Sidebar Menu-->
             <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
-                <li class="nav-item menu-open">
-                    <a href="{{ route('dashboard') }}" class="nav-link active">
+                <li class="nav-item">
+                    <a href="{{ route('dashboard') }}" class="nav-link ">
                         <i class="nav-icon bi bi-speedometer"></i>
                         <p>
                             Dashboard
                         </p>
                     </a>
                 </li>
-                <li class="nav-item menu-open">
-                    <a href="{{ route('branches.index') }}" class="nav-link active">
+                <li class="nav-item">
+                    <a href="{{ route('branches.index') }}" class="nav-link ">
                         <i class="bi bi-building-add"></i>
                         <p>
                             Create Branch
@@ -54,7 +54,7 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a href="{{ route('register.index') }}" class="nav-link">
-                                        <i class="fas fa-user-friends text-primary"></i>
+                                        <i class="fas fa-user-friends text-warning"></i>
                                         <p>List of Patient's</p>
                                     </a>
                                 </li>
@@ -62,7 +62,7 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a href="{{ route('register.create') }}" class="nav-link">
-                                        <i class="fa-regular fa-address-card text-primary "></i>
+                                        <i class="fa-regular fa-address-card text-warning "></i>
                                         <p>Patient's Registration</p>
                                     </a>
                                 </li>
@@ -70,7 +70,67 @@
                         </li>
                     @endif
                 @endauth
+                @auth
+                    @if (auth()->user()->role === 'admin')
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-journal-check"></i>
+                                <p>
+                                    Assessment
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('assessment.index') }}" class="nav-link">
+                                        <i class="bi bi-check2-square text-warning"></i>
+                                        <p>Assign Assessment</p>
+                                    </a>
+                                </li>
+                            </ul>
 
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('assessment.create') }}" class="nav-link ">
+                                        <i class="bi bi-clipboard-check text-warning"></i>
+                                        <p>Fill Assesment</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    @endif
+                @endauth
+
+                @auth
+                    @if (auth()->user()->role === 'admin')
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-user-md"></i>
+                                <p>
+                                    Doctor's
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{route('doctor.index')}}" class="nav-link">
+                                        <i class="bi bi-card-list text-warning"></i>
+                                        <p>Doctor List</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{route('doctor.create')}}" class="nav-link">
+                                        <i class="bi bi-person-plus-fill text-warning"></i>
+                                        <p>Create Doctor</p>
+                                    </a>
+                                </li>
+                            </ul>
+
+                        </li>
+                    @endif
+                @endauth
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-box-seam-fill"></i>
