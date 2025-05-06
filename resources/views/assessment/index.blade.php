@@ -45,18 +45,7 @@
                                 <li><a class="dropdown-item" href="#">Multiple Visits</a></li>
                             </ul>
                         </div>
-                        &nbsp;
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                                data-bs-toggle="dropdown">
-                                Clicked
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">All Patients</a></li>
-                                <li><a class="dropdown-item" href="#">Single Visit</a></li>
-                                <li><a class="dropdown-item" href="#">Multiple Visits</a></li>
-                            </ul>
-                        </div>
+
                         <!-- Search input on the right -->
                         <div class="input-group input-group-sm ms-auto" style="width: 250px;">
                             <input type="text" class="form-control" placeholder="Search..." id="searchInput">
@@ -70,55 +59,50 @@
                         <table class="table table-hover table-bordered text-center mb-0">
                             <thead class="bg-light">
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Dr. Name</th>
-                                    <th>Location</th>
+                                    <th>Registered Number </th>
+                                    <th>Patient Name</th>
+                                    <th>Doctor Name</th>
                                     <th>Date</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($users as $user)
+                                @foreach ($assessments as $assessment)
                                     <tr>
-                                        <td> {{ $user->name }}</td>
-                                        <td> {{ $user->doctor_name }}</td>
-                                        <td> {{ $user->location }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($user->created_at)->format('jS F Y') }}</td>
+                                        <td> {{ $assessment->patient_number }}</td>
+                                        <td> {{ $assessment->patient_name }}</td>
+                                        <td> {{ $assessment->doctor_name }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($assessment->created_at)->format('jS F Y') }}</td>
                                         <td>
-                                            @switch($user->status)
-                                            @case('Pending')
-                                                <span class="badge bg-warning text-dark">Pending</span>
-                                                @break
-
-                                            @case('Clicked')
-                                                <span class="badge bg-success">Clicked</span>
-                                                @break
-
-                                            @case('Cancelled')
-                                                <span class="badge bg-danger">Cancelled</span>
-                                                @break
-
-                                            @default
+                                            @if ($assessment->status === 'pending')
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="bi bi-hourglass-split"></i> Pending
+                                                </span>
+                                            @elseif($assessment->status === 'completed')
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle-fill"></i> Completed
+                                                </span>
+                                            @else
                                                 <span class="badge bg-secondary">Unknown</span>
-                                        @endswitch
-
+                                            @endif
                                         </td>
                                         <td>
-                                            @if ($user->assessment_id !== null || $user->status == 'Pending' || $user->status == 'Cancelled')
-                                            <button type="button" class="btn btn-primary btn-sm open-assign-modal"
-                                                data-toggle="modal" data-target="#formModal"
-                                                data-id="{{ $user->user_number }}" data-name="{{ $user->name }}"
-                                                disabled>
-                                                Assigned To
-                                            </button>
-                                        @else
-                                            <button type="button" class="btn btn-primary btn-sm open-assign-modal"
-                                                data-toggle="modal" data-target="#formModal"
-                                                data-id="{{ $user->user_number }}" data-name="{{ $user->name }}">
-                                                Assigned To
-                                            </button>
-                                        @endif
+                                            <!-- PDF Button -->
+                                            @if ($assessment->status === 'completed')
+                                                <a href="#" class="btn btn-sm btn-outline-danger rounded-circle ms-2"
+                                                    title="Download PDF">
+                                                    <i class="bi bi-file-earmark-pdf-fill"></i>
+                                                </a>
+                                            @endif
+                                            @if ($assessment->status === 'pending')
+                                                <!-- Fill Form Button -->
+                                                <a href="{{ route('assessment.create', $assessment->id) }}"
+                                                    class="btn btn-sm btn-outline-primary rounded-circle ms-2"
+                                                    title="Fill Form">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -146,7 +130,7 @@
 
                 </div>
                 <div class="modal-body">
-                    <form id="formModalForm" method="POST" action="{{ route('assessment.assign') }}">
+                    <form id="formModalForm" method="POST" action="">
                         @csrf
 
                         <input type="hidden" id="user_number" name="user_number">
@@ -159,17 +143,11 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="doctor_number" class="form-label fw-bold">Doctor's Name <span
+                            <label for="doctor_name" class="form-label fw-bold">Doctor's Name <span
                                     class="text-danger">*</span></label>
-                            <select class="form-select rounded-3 shadow-sm" id="doctor_number" name="doctor_number"
-                                required>
-                                <option value="">Select Doctor</option>
-                                @foreach ($doctors as $doctor)
-                                    <option value="{{ $doctor->user_number }}">{{ $doctor->name }}</option>
-                                @endforeach
-                            </select>
+                            <input type="text" class="form-control rounded-3 shadow-sm" id="doctor_name"
+                                name="doctor_name" placeholder="Enter doctor's name" required>
                         </div>
-
 
                         <div class="mb-4">
                             <label for="message" class="form-label fw-bold">Message <span

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Patient List
+    Session List
 @endsection
 
 @section('content')
@@ -13,12 +13,12 @@
                 <!--begin::Row-->
                 <div class="row">
                     <div class="col-sm-6">
-                        <h3 class="mb-0">Assessment List</h3>
+                        <h3 class="mb-0">Session List</h3>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-end">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Patient's</li>
+                            <li class="breadcrumb-item active" aria-current="page">Session's</li>
                             @include('components.sweet_alert')
                         </ol>
                     </div>
@@ -45,18 +45,7 @@
                                 <li><a class="dropdown-item" href="#">Multiple Visits</a></li>
                             </ul>
                         </div>
-                        &nbsp;
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                                data-bs-toggle="dropdown">
-                                Clicked
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">All Patients</a></li>
-                                <li><a class="dropdown-item" href="#">Single Visit</a></li>
-                                <li><a class="dropdown-item" href="#">Multiple Visits</a></li>
-                            </ul>
-                        </div>
+
                         <!-- Search input on the right -->
                         <div class="input-group input-group-sm ms-auto" style="width: 250px;">
                             <input type="text" class="form-control" placeholder="Search..." id="searchInput">
@@ -70,9 +59,9 @@
                         <table class="table table-hover table-bordered text-center mb-0">
                             <thead class="bg-light">
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Dr. Name</th>
-                                    <th>Location</th>
+                                    <th>Patient Name</th>
+                                    <th>Doctor Name</th>
+                                    <th>Running Session</th>
                                     <th>Date</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -83,42 +72,42 @@
                                     <tr>
                                         <td> {{ $user->name }}</td>
                                         <td> {{ $user->doctor_name }}</td>
-                                        <td> {{ $user->location }}</td>
+                                        <td> {{ $user->session_number }}</td>
                                         <td>{{ \Carbon\Carbon::parse($user->created_at)->format('jS F Y') }}</td>
                                         <td>
-                                            @switch($user->status)
-                                            @case('Pending')
-                                                <span class="badge bg-warning text-dark">Pending</span>
+                                            @switch($user->session_status)
+                                                @case('Pending')
+                                                    <span class="badge bg-warning text-dark">Pending</span>
                                                 @break
 
-                                            @case('Clicked')
-                                                <span class="badge bg-success">Clicked</span>
+                                                @case('Clicked')
+                                                    <span class="badge bg-success">Clicked</span>
                                                 @break
 
-                                            @case('Cancelled')
-                                                <span class="badge bg-danger">Cancelled</span>
+                                                @case('Cancelled')
+                                                    <span class="badge bg-danger">Cancelled</span>
                                                 @break
 
-                                            @default
-                                                <span class="badge bg-secondary">Unknown</span>
-                                        @endswitch
-
+                                                @default
+                                                    <span class="badge bg-secondary">Unknown</span>
+                                            @endswitch
                                         </td>
                                         <td>
-                                            @if ($user->assessment_id !== null || $user->status == 'Pending' || $user->status == 'Cancelled')
-                                            <button type="button" class="btn btn-primary btn-sm open-assign-modal"
-                                                data-toggle="modal" data-target="#formModal"
-                                                data-id="{{ $user->user_number }}" data-name="{{ $user->name }}"
-                                                disabled>
-                                                Assigned To
-                                            </button>
-                                        @else
-                                            <button type="button" class="btn btn-primary btn-sm open-assign-modal"
-                                                data-toggle="modal" data-target="#formModal"
-                                                data-id="{{ $user->user_number }}" data-name="{{ $user->name }}">
-                                                Assigned To
-                                            </button>
-                                        @endif
+                                            <!-- PDF Button -->
+                                            @if ($user->session_id !== null || $user->session_status == 'Pending' || $user->session_status == 'Cancelled')
+                                                <button type="button" class="btn btn-primary btn-sm open-session-modal"
+                                                    data-toggle="modal" data-target="#formModal"
+                                                    data-id="{{ $user->user_number }}" data-name="{{ $user->name }}"
+                                                    >
+                                                    Assigned To
+                                                </button>
+                                            @else
+                                                <button type="button" class="btn btn-primary btn-sm open-session-modal"
+                                                    data-toggle="modal" data-target="#formModal"
+                                                    data-id="{{ $user->user_number }}" data-name="{{ $user->name }}">
+                                                    Assigned To
+                                                </button>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -146,16 +135,23 @@
 
                 </div>
                 <div class="modal-body">
-                    <form id="formModalForm" method="POST" action="{{ route('assessment.assign') }}">
+                    <form id="formModalForm" method="POST" action="{{route('treatmentSession.store')}}">
                         @csrf
 
                         <input type="hidden" id="user_number" name="user_number">
 
                         <div class="mb-4">
-                            <label for="assessment_date" class="form-label fw-bold">Assessment Date <span
+                            <label for="session_date" class="form-label fw-bold">Session Date <span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control rounded-3 shadow-sm" id="assessment_date"
-                                name="assessment_date" required>
+                            <input type="date" class="form-control rounded-3 shadow-sm" id="session_date"
+                                name="session_date" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="session_number" class="form-label fw-bold">Session Number <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-3 shadow-sm" id="session_number"
+                                name="session_number" placeholder="Enter Here" required>
                         </div>
 
                         <div class="mb-4">
@@ -169,7 +165,6 @@
                                 @endforeach
                             </select>
                         </div>
-
 
                         <div class="mb-4">
                             <label for="message" class="form-label fw-bold">Message <span
@@ -195,7 +190,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('.open-assign-modal').click(function() {
+            $('.open-session-modal').click(function() {
                 var userId = $(this).data('id');
                 var userName = $(this).data('name');
 

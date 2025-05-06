@@ -41,8 +41,23 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">All Patients</a></li>
-                                <li><a class="dropdown-item" href="#">Single Visit</a></li>
-                                <li><a class="dropdown-item" href="#">Multiple Visits</a></li>
+                                <li><a class="dropdown-item" href="#">Pending</a></li>
+                                <li><a class="dropdown-item" href="#">Clicked</a></li>
+                                <li><a class="dropdown-item" href="#">Cancelled</a></li>
+                                <li><a class="dropdown-item" href="#">Refund</a></li>
+
+                            </ul>
+                        </div>
+                        &nbsp;
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown">
+                                Sort By
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Name</a></li>
+                                <li><a class="dropdown-item" href="#">Date</a></li>
+                                <li><a class="dropdown-item" href="#">Descending</a></li>
                             </ul>
                         </div>
 
@@ -75,9 +90,27 @@
                                         <td> {{ $user->name }}</td>
                                         <td> {{ $user->contact }}</td>
                                         <td> {{ $user->location }}</td>
-                                        <td> {{ $user->status }}</td>
+                                        <td>   @switch($user->status)
+                                            @case('Pending')
+                                                <span class="badge bg-warning text-dark">Pending</span>
+                                                @break
+
+                                            @case('Clicked')
+                                                <span class="badge bg-success">Clicked</span>
+                                                @break
+
+                                            @case('Cancelled')
+                                                <span class="badge bg-danger">Cancelled</span>
+                                                @break
+
+                                            @default
+                                                <span class="badge bg-secondary">Unknown</span>
+                                        @endswitch</td>
                                         <td> {{ $user->due_payment }}</td>
-                                        <td> <a href={{route('admin.patient.history',$user->user_number)}} class="btn btn-outline-info btn-block btn-flat">
+                                        <td>
+                                            <a href={{route('register.edit',$user->id)}} class="btn btn-outline-primary btn-block btn-flat">
+                                                <i class="fa-solid fa-user-pen"></i></a>
+                                             <a href={{route('admin.patient.history',$user->user_number)}} class="btn btn-outline-info btn-block btn-flat">
                                                 <i class="fa fa-book"></i> History </a></td>
                                     </tr>
                                 @endforeach

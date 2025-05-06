@@ -89,7 +89,7 @@
                                             {{ $doctor->address }}</td>
                                         <td class="align-middle">
                                             <button type="button" class="btn btn-primary btn-sm open-assign-modal"
-                                                data-toggle="modal" data-target="#formModal"
+
                                                 data-id="{{ $doctor->user_number }}" data-name="{{ $doctor->name }}">
                                                 More Info
                                             </button>
@@ -104,71 +104,10 @@
         </div>
 
     </main>
-    <!-- Modal Structure -->
-    <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header d-flex justify-content-between align-items-center">
-                    <h5 class="modal-title text-primary" id="formModalLabel">Name : User Name</h5>
 
-                    <span class="text-danger" style="cursor:pointer; font-size:24px;" data-dismiss="modal"
-                        aria-label="Close">
-                        &times;
-                    </span>
-
-                </div>
-                <div class="modal-body">
-                    <form id="formModalForm" method="POST" action="">
-                        @csrf
-
-                        <input type="hidden" id="user_number" name="user_number">
-
-                        <div class="mb-4">
-                            <label for="assessment_date" class="form-label fw-bold">Assessment Date <span
-                                    class="text-danger">*</span></label>
-                            <input type="date" class="form-control rounded-3 shadow-sm" id="assessment_date"
-                                name="assessment_date" required>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="doctor_name" class="form-label fw-bold">Doctor's Name <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control rounded-3 shadow-sm" id="doctor_name"
-                                name="doctor_name" placeholder="Enter doctor's name" required>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="message" class="form-label fw-bold">Message <span
-                                    class="text-danger">*</span></label>
-                            <textarea class="form-control rounded-3 shadow-sm" id="message" name="message" rows="4"
-                                placeholder="Write your message here..." required></textarea>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-success rounded-pill shadow">Submit Form</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 
 @section('customJs')
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.open-assign-modal').click(function() {
-                var userId = $(this).data('id');
-                var userName = $(this).data('name');
 
-                $('#user_number').val(userId);
-
-                $('#formModalLabel').text('Name : ' + userName);
-            });
-        });
-    </script>
 @endsection

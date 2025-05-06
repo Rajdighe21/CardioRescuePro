@@ -2,13 +2,23 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Config;
+use App\Models\Branch;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 
 class DynamicDBService
 {
-    public function setConnection($databaseName, $connectionName = 'branch_temp')
+    public function setConnection($connectionName = 'branch_temp')
     {
+
+        $authUser = Auth::user();
+        $branchCode = $authUser->branch_code;
+
+        // Get branch details
+        $branch = Branch::where('branch_code', $branchCode)->first();
+        $databaseName = $branch?->database_name;
+
         Config::set("database.connections.$connectionName", [
             'driver' => 'mysql',
             'host' => env('DB_HOST', '127.0.0.1'),

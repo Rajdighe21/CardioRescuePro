@@ -109,7 +109,7 @@ class RegistrationController extends Controller
             return response()->json(['error' => 'Branch not found Contact Your Management'], 404);
         }
 
-        $this->DynamicDBService->setConnection($database_name, 'branch_temp');
+        $this->DynamicDBService->setConnection();
 
         // Insert into dynamic DB
         DB::connection('branch_temp')->table('patient_registrations')->insert([
@@ -149,17 +149,79 @@ class RegistrationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+
+
+        try {
+            $this->DynamicDBService->setConnection();
+
+            $user = DB::table('patient_registrations')->where('id', $id)->first();
+
+            if (!$user) {
+                return redirect()->back()->with('error', 'Patient record not found.');
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong while fetching data.');
+        }
+
+        return view('registration.edit', compact('user'));
     }
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'contact' => 'required|digits:10',
+            'gender' => 'required',
+            'age' => 'required|integer',
+            'firstPayment' => 'required|numeric',
+            'duePayment' => 'required|numeric',
+            'date' => 'required|date',
+            'address' => 'required|string',
+            'patintProblem' => 'required|string',
+            'location' => 'required|string',
+            'status' => 'required|string',
+            'medication' => 'required',
+            'medicineList' => 'nullable|string',
+        ]);
+
+
+
+        $branch_code = Auth::user()->branch_code;
+        $branch = Branch::where('branch_code', $branch_code)->first();
+        $database_name = $branch->database_name;
+
+        if (!$branch) {
+            return response()->json(['error' => 'Branch not found Contact Your Management'], 404);
+        }
+
+        $this->DynamicDBService->setConnection();
+
+        // Insert into dynamic DB
+        DB::connection('branch_temp')->table('patient_registrations')->where('id',$id)->update([
+            'first_payment' => $validated['firstPayment'],
+            'due_payment' => $validated['duePayment'],
+            'address' => $validated['address'],
+            'patient_problem' => $validated['patintProblem'],
+            'date' =>$validated['date'],
+            'location' => $validated['location'],
+            'status' => $validated['status'],
+            'medication' => $validated['medication'],
+            'medication_list' => $validated['medicineList'],
+            'updated_at' => now(),
+        ]);
+
+        $this->DynamicDBService->resetToDefault();
+
+
+        return redirect()->route('register.index')->with('success', 'Patient Updated successfully');
+
+        // dd($request->all());
     }
 
     /**

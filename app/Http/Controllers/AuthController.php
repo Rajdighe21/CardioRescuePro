@@ -45,9 +45,9 @@ class AuthController extends Controller
 
             // Redirect based on role after login
             return match ($user->role) {
-                'super_admin', 'admin' => redirect()->route('dashboard'),
+                'super_admin' => redirect()->route('dashboard'),
+                'admin' => redirect()->route('dashboard'),
                 'doctor' => redirect()->route('doctor.dashboard'),
-                'patient' => redirect()->route('patient.dashboard'),
                 default => redirect()->route('loginForm')->with('error', 'Invalid role.'),
             };
         }
@@ -59,6 +59,12 @@ class AuthController extends Controller
     public function viewDashboard()
     {
         return view('dashboard.dashboard');
+    }
+
+
+    public function doctorDashboard()
+    {
+        return view('dashboard.doctor_dashboard');
     }
 
     public function logout()

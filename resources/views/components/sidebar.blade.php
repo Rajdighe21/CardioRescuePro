@@ -91,9 +91,38 @@
 
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('assessment.create') }}" class="nav-link ">
+                                    <a href="{{ route('assessment.show') }}" class="nav-link ">
                                         <i class="bi bi-clipboard-check text-warning"></i>
                                         <p>Fill Assesment</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    @endif
+                @endauth
+                @auth
+                    @if (in_array(auth()->user()->role, ['admin', 'super_admin', 'doctor']))
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-stethoscope"></i>
+                                <p>
+                                    Session's
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @if (in_array(auth()->user()->role, ['admin', 'super_admin']))
+                                    <li class="nav-item">
+                                        <a href="{{ route('treatmentSession.index') }}" class="nav-link">
+                                            <i class="fas fa-notes-medical text-warning"></i>
+                                            <p>Assign Session</p>
+                                        </a>
+                                    </li>
+                                @endif
+                                <li class="nav-item">
+                                    <a href="{{ route('assessment.show') }}" class="nav-link">
+                                        <i class="fas fa-file-medical-alt text-warning"></i>
+                                        <p>Session Details</p>
                                     </a>
                                 </li>
                             </ul>
@@ -113,7 +142,7 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{route('doctor.index')}}" class="nav-link">
+                                    <a href="{{ route('doctor.index') }}" class="nav-link">
                                         <i class="bi bi-card-list text-warning"></i>
                                         <p>Doctor List</p>
                                     </a>
@@ -121,7 +150,7 @@
                             </ul>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{route('doctor.create')}}" class="nav-link">
+                                    <a href="{{ route('doctor.create') }}" class="nav-link">
                                         <i class="bi bi-person-plus-fill text-warning"></i>
                                         <p>Create Doctor</p>
                                     </a>
